@@ -53,7 +53,7 @@ export default class FingerprintReportController extends Controller {
         });
       });
     } else {
-      return ajax("/admin/plugins/fingerprint").then((response) => {
+      return ajax("/admin/plugins/fingerprint/report").then((response) => {
         const users = {};
         Object.values(response.users).forEach((user) => {
           users[user.id] = EmberObject.create(user);
