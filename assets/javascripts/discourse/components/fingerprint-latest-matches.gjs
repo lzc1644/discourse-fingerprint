@@ -1,8 +1,9 @@
-/* eslint-disable ember/no-classic-components, ember/require-tagless-components */
-import Component, { Input } from "@ember/component";
+import Component from "@glimmer/component";
+import { tracked } from "@glimmer/tracking";
+import { Input } from "@ember/component";
 import { fn } from "@ember/helper";
-import { on } from "@ember/modifier";
 import { trustHTML } from "@ember/template";
+import DButton from "discourse/components/d-button";
 import UserLink from "discourse/components/user-link";
 import avatar from "discourse/helpers/avatar";
 import icon from "discourse/helpers/d-icon";
@@ -10,7 +11,7 @@ import { and, not } from "discourse/truth-helpers";
 import { i18n } from "discourse-i18n";
 
 export default class FingerprintLatestMatches extends Component {
-  hideCommon = true;
+  @tracked hideCommon = true;
 
   <template>
     <div class="section">
@@ -25,7 +26,7 @@ export default class FingerprintLatestMatches extends Component {
           )
         }}
 
-        {{#if this.fingerprints.length}}
+        {{#if @fingerprints.length}}
           <table>
             <thead>
               <tr>
@@ -33,11 +34,11 @@ export default class FingerprintLatestMatches extends Component {
                 <th>{{i18n "fingerprint.results.hash"}}</th>
                 <th>{{i18n "fingerprint.results.matches"}}</th>
                 <th colspan="3">
-                  {{Input
-                    type="checkbox"
+                  <Input
+                    @type="checkbox"
                     id="hide-common"
-                    checked=this.hideCommon
-                  }}
+                    @checked={{this.hideCommon}}
+                  />
                   <label for="hide-common">{{i18n
                       "fingerprint.hide_common"
                     }}</label>
@@ -45,7 +46,7 @@ export default class FingerprintLatestMatches extends Component {
               </tr>
             </thead>
             <tbody>
-              {{#each this.fingerprints as |fingerprint|}}
+              {{#each @fingerprints as |fingerprint|}}
                 {{#if (not (and this.hideCommon fingerprint.is_common))}}
                   <tr>
                     <td>{{icon fingerprint.device_type}}</td>
@@ -71,47 +72,46 @@ export default class FingerprintLatestMatches extends Component {
                     </td>
                     <td>
                       {{#if fingerprint.hidden}}
-                        <a
-                          href
-                          {{on "click" (fn this.flag "hide" fingerprint "yes")}}
-                        >{{icon "far-eye"}}
-                          {{i18n "js.fingerprint.unhide"}}</a>
+                        <DButton
+                          @action={{fn @flag "hide" fingerprint "yes"}}
+                          @icon="far-eye"
+                          @label="js.fingerprint.unhide"
+                          class="btn-flat"
+                        />
                       {{else}}
-                        <a
-                          href
-                          {{on "click" (fn this.flag "hide" fingerprint)}}
-                        >{{icon "far-eye-slash"}}
-                          {{i18n "js.fingerprint.hide"}}</a>
+                        <DButton
+                          @action={{fn @flag "hide" fingerprint}}
+                          @icon="far-eye-slash"
+                          @label="js.fingerprint.hide"
+                          class="btn-flat"
+                        />
                       {{/if}}
                     </td>
                     <td>
                       {{#if fingerprint.silenced}}
-                        <a
-                          href
-                          {{on
-                            "click"
-                            (fn this.flag "silence" fingerprint "yes")
-                          }}
-                        >{{icon "microphone"}}
-                          {{i18n "js.fingerprint.unsilence"}}</a>
+                        <DButton
+                          @action={{fn @flag "silence" fingerprint "yes"}}
+                          @icon="microphone"
+                          @label="js.fingerprint.unsilence"
+                          class="btn-flat"
+                        />
                       {{else}}
-                        <a
-                          href
-                          class="silence"
-                          {{on "click" (fn this.flag "silence" fingerprint)}}
-                        >{{icon "microphone-slash"}}
-                          {{i18n "js.fingerprint.silence"}}</a>
+                        <DButton
+                          @action={{fn @flag "silence" fingerprint}}
+                          @icon="microphone-slash"
+                          @label="js.fingerprint.silence"
+                          class="btn-flat silence"
+                        />
                       {{/if}}
                     </td>
                     <td>
                       {{#if fingerprint.data}}
-                        <a
-                          href
-                          {{on
-                            "click"
-                            (fn this.showFingerprintData fingerprint.data)
-                          }}
-                        >{{icon "info"}} {{i18n "js.fingerprint.details"}}</a>
+                        <DButton
+                          @action={{fn @showFingerprintData fingerprint.data}}
+                          @icon="info"
+                          @label="js.fingerprint.details"
+                          class="btn-flat"
+                        />
                       {{/if}}
                     </td>
                   </tr>

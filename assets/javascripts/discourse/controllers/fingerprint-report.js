@@ -108,6 +108,7 @@ export default class FingerprintReportController extends Controller {
       } else if (type === "silence") {
         fingerprint.set("silenced", !remove);
       }
+      return this.update(this.username);
     });
   }
 
@@ -122,6 +123,7 @@ export default class FingerprintReportController extends Controller {
       },
     }).then(() => {
       otherUser.set("ignored", !remove);
+      return this.update(this.username);
     });
   }
 }

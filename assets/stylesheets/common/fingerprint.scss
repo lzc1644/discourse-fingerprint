@@ -9,10 +9,18 @@
 
   td.details-col {
     white-space: nowrap;
+
+    .btn-flat {
+      padding: 0.25em 0.5em;
+    }
   }
 
   .silence {
-    color: $danger;
+    color: var(--danger, $danger);
+
+    .d-icon {
+      color: var(--danger, $danger);
+    }
   }
 }
 

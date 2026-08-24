@@ -1,8 +1,7 @@
-/* eslint-disable ember/no-classic-components, ember/require-tagless-components */
-import Component from "@ember/component";
+import Component from "@glimmer/component";
 import { fn } from "@ember/helper";
-import { on } from "@ember/modifier";
 import { trustHTML } from "@ember/template";
+import DButton from "discourse/components/d-button";
 import icon from "discourse/helpers/d-icon";
 import { i18n } from "discourse-i18n";
 
@@ -15,7 +14,7 @@ export default class FingerprintFlagged extends Component {
       <div class="section-body">
         {{trustHTML (i18n "fingerprint.flagged_instructions")}}
 
-        {{#if this.flagged.length}}
+        {{#if @flagged.length}}
           <table>
             <thead>
               <tr>
@@ -27,7 +26,7 @@ export default class FingerprintFlagged extends Component {
               </tr>
             </thead>
             <tbody>
-              {{#each this.flagged as |fingerprint|}}
+              {{#each @flagged as |fingerprint|}}
                 <tr>
                   <td>
                     <small>
@@ -44,47 +43,46 @@ export default class FingerprintFlagged extends Component {
                   <td>{{fingerprint.count}}</td>
                   <td>
                     {{#if fingerprint.hidden}}
-                      <a
-                        href
-                        {{on "click" (fn this.flag "hide" fingerprint "yes")}}
-                      >{{icon "far-eye"}}
-                        {{i18n "js.fingerprint.unhide"}}</a>
+                      <DButton
+                        @action={{fn @flag "hide" fingerprint "yes"}}
+                        @icon="far-eye"
+                        @label="js.fingerprint.unhide"
+                        class="btn-flat"
+                      />
                     {{else}}
-                      <a
-                        href
-                        {{on "click" (fn this.flag "hide" fingerprint)}}
-                      >{{icon "far-eye-slash"}}
-                        {{i18n "js.fingerprint.hide"}}</a>
+                      <DButton
+                        @action={{fn @flag "hide" fingerprint}}
+                        @icon="far-eye-slash"
+                        @label="js.fingerprint.hide"
+                        class="btn-flat"
+                      />
                     {{/if}}
                   </td>
                   <td>
                     {{#if fingerprint.silenced}}
-                      <a
-                        href
-                        {{on
-                          "click"
-                          (fn this.flag "silence" fingerprint "yes")
-                        }}
-                      >{{icon "microphone"}}
-                        {{i18n "js.fingerprint.unsilence"}}</a>
+                      <DButton
+                        @action={{fn @flag "silence" fingerprint "yes"}}
+                        @icon="microphone"
+                        @label="js.fingerprint.unsilence"
+                        class="btn-flat"
+                      />
                     {{else}}
-                      <a
-                        href
-                        class="silence"
-                        {{on "click" (fn this.flag "silence" fingerprint)}}
-                      >{{icon "microphone-slash"}}
-                        {{i18n "js.fingerprint.silence"}}</a>
+                      <DButton
+                        @action={{fn @flag "silence" fingerprint}}
+                        @icon="microphone-slash"
+                        @label="js.fingerprint.silence"
+                        class="btn-flat silence"
+                      />
                     {{/if}}
                   </td>
                   <td>
                     {{#if fingerprint.data}}
-                      <a
-                        href
-                        {{on
-                          "click"
-                          (fn this.showFingerprintData fingerprint.data)
-                        }}
-                      >{{icon "info"}} {{i18n "js.fingerprint.details"}}</a>
+                      <DButton
+                        @action={{fn @showFingerprintData fingerprint.data}}
+                        @icon="info"
+                        @label="js.fingerprint.details"
+                        class="btn-flat"
+                      />
                     {{/if}}
                   </td>
                 </tr>
