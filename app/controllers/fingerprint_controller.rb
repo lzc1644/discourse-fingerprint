@@ -71,7 +71,6 @@ class DiscourseFingerprint::FingerprintController < ApplicationController
         current_user,
         Discourse.system_user,
         silenced_till: 1000.years.from_now,
-        reason: I18n.t("fingerprint.silenced"),
         keep_posts: true,
       ).silence
     end

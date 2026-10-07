@@ -4,5 +4,3 @@ en:
     fingerprint_cookie: "Use cookies for fingerprinting user browsers."
     fingerprint_ip: "Use IPs to create fingerprints."
     max_fingerprints: "Maximum number of fingerprints stored for each user."
-  fingerprint:
-    silenced: 'silenced automatically per fingerprint'
