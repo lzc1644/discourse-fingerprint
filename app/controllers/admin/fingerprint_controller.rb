@@ -69,25 +69,33 @@ class DiscourseFingerprint::FingerprintAdminController < Admin::AdminController
         .to_h { |match| [match.value, match.user_ids - [user.id]] }
 
     users = User.where(id: user_ids.values.flatten.uniq).or(User.where(id: ignored_ids))
+    flagged = FlaggedFingerprint.where(value: fingerprints.select(:value)).index_by(&:value)
 
     render json: {
              user: BasicUserSerializer.new(user, root: false),
              ignored_ids: ignored_ids,
              fingerprints:
-               serialize_data(fingerprints, FingerprintSerializer, scope: { user_ids: user_ids }),
+               serialize_data(
+                 fingerprints,
+                 FingerprintSerializer,
+                 scope: {
+                   user_ids: user_ids,
+                   flagged: flagged,
+                 },
+               ),
              users: users.map { |u| [u.id, BasicUserSerializer.new(u, root: false)] }.to_h,
            }
   end
 
-  # Hides a match from the 'Latest matches' page.
+  # Sets or removes a fingerprint rule.
   #
   # Params:
-  # +type+::    Type of flag (hide or silence)
-  # +value+::   Value of the fingerprint match to hide
+  # +type+::    Type of flag (hide, silence, or suspend)
+  # +value+::   Value of the fingerprint to flag
   # +remove+::  Whether this operation is adding or removing the flag
   def flag
     raise Discourse::InvalidParameters.new(:value) if params[:value].blank?
-    if params[:type] != "hide" && params[:type] != "silence"
+    if %w[hide silence suspend].exclude?(params[:type])
       raise Discourse::InvalidParameters.new(:type)
     end
 
@@ -99,9 +107,11 @@ class DiscourseFingerprint::FingerprintAdminController < Admin::AdminController
       flagged.hidden = params[:remove].blank?
     elsif params[:type] == "silence"
       flagged.silenced = params[:remove].blank?
+    elsif params[:type] == "suspend"
+      flagged.suspended = params[:remove].blank?
     end
 
-    if flagged.hidden || flagged.silenced
+    if flagged.hidden || flagged.silenced || flagged.suspended
       flagged.save
     else
       flagged.delete

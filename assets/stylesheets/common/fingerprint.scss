@@ -15,7 +15,8 @@
     }
   }
 
-  .silence {
+  .silence,
+  .suspend {
     color: var(--danger, $danger);
 
     .d-icon {

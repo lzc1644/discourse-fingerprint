@@ -66,7 +66,17 @@ class DiscourseFingerprint::FingerprintController < ApplicationController
       )
     end
 
-    if !current_user.silenced? && FlaggedFingerprint.find_by(value: hashes, silenced: true).present?
+    if FlaggedFingerprint.exists?(value: hashes, suspended: true)
+      unless current_user.suspended?
+        UserSuspender.new(
+          current_user,
+          suspended_till: 1000.years.from_now,
+          reason: nil,
+          by_user: Discourse.system_user,
+        ).suspend
+      end
+    elsif !current_user.silenced? &&
+          FlaggedFingerprint.find_by(value: hashes, silenced: true).present?
       UserSilencer.new(
         current_user,
         Discourse.system_user,

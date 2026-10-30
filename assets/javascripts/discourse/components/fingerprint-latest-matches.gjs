@@ -33,7 +33,7 @@ export default class FingerprintLatestMatches extends Component {
                 <th></th>
                 <th>{{i18n "fingerprint.results.hash"}}</th>
                 <th>{{i18n "fingerprint.results.matches"}}</th>
-                <th colspan="3">
+                <th colspan="4">
                   <Input
                     @type="checkbox"
                     id="hide-common"
@@ -101,6 +101,23 @@ export default class FingerprintLatestMatches extends Component {
                           @icon="microphone-slash"
                           @label="js.fingerprint.silence"
                           class="btn-flat silence"
+                        />
+                      {{/if}}
+                    </td>
+                    <td>
+                      {{#if fingerprint.suspended}}
+                        <DButton
+                          @action={{fn @flag "suspend" fingerprint "yes"}}
+                          @icon="unlock"
+                          @label="js.fingerprint.unsuspend"
+                          class="btn-flat"
+                        />
+                      {{else}}
+                        <DButton
+                          @action={{fn @flag "suspend" fingerprint}}
+                          @icon="ban"
+                          @label="js.fingerprint.suspend"
+                          class="btn-flat suspend"
                         />
                       {{/if}}
                     </td>

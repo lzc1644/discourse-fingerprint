@@ -10,7 +10,8 @@ class FingerprintSerializer < ApplicationSerializer
              :updated_at,
              :user_ids,
              :hidden,
-             :silenced
+             :silenced,
+             :suspended
 
   def include_data?
     data.present?
@@ -75,5 +76,13 @@ class FingerprintSerializer < ApplicationSerializer
 
   def silenced
     scope[:flagged][object.value]&.silenced
+  end
+
+  def include_suspended?
+    scope.present? && scope[:flagged].present?
+  end
+
+  def suspended
+    scope[:flagged][object.value]&.suspended
   end
 end

@@ -2,9 +2,12 @@ import Controller from "@ember/controller";
 import EmberObject, { action, computed } from "@ember/object";
 import { service } from "@ember/service";
 import { ajax } from "discourse/lib/ajax";
+import { popupAjaxError } from "discourse/lib/ajax-error";
+import { i18n } from "discourse-i18n";
 import FingerprintDetails from "../components/modal/fingerprint-details";
 
 export default class FingerprintReportController extends Controller {
+  @service dialog;
   @service modal;
 
   queryParams = ["username"];
@@ -99,17 +102,17 @@ export default class FingerprintReportController extends Controller {
 
   @action
   flag(type, fingerprint, remove) {
-    return ajax("/admin/plugins/fingerprint/flag", {
-      type: "PUT",
-      data: { type, value: fingerprint.value, remove },
-    }).then(() => {
-      if (type === "hide") {
-        fingerprint.set("hidden", !remove);
-      } else if (type === "silence") {
-        fingerprint.set("silenced", !remove);
-      }
-      return this.update(this.username);
-    });
+    if (type === "suspend" && !remove) {
+      this.dialog.confirm({
+        message: i18n("fingerprint.suspend_confirm"),
+        confirmButtonLabel: "js.fingerprint.suspend",
+        confirmButtonClass: "btn-danger",
+        didConfirm: () => this.#updateFlag(type, fingerprint, remove),
+      });
+      return;
+    }
+
+    return this.#updateFlag(type, fingerprint, remove);
   }
 
   @action
@@ -125,5 +128,23 @@ export default class FingerprintReportController extends Controller {
       otherUser.set("ignored", !remove);
       return this.update(this.username);
     });
+  }
+
+  #updateFlag(type, fingerprint, remove) {
+    return ajax("/admin/plugins/fingerprint/flag", {
+      type: "PUT",
+      data: { type, value: fingerprint.value, remove },
+    })
+      .then(() => {
+        if (type === "hide") {
+          fingerprint.set("hidden", !remove);
+        } else if (type === "silence") {
+          fingerprint.set("silenced", !remove);
+        } else if (type === "suspend") {
+          fingerprint.set("suspended", !remove);
+        }
+        return this.update(this.username);
+      })
+      .catch(popupAjaxError);
   }
 }

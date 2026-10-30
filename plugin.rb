@@ -12,6 +12,7 @@ add_admin_route "fingerprint.title", "fingerprint"
 
 register_asset "stylesheets/common/fingerprint.scss"
 %w[
+  ban
   desktop
   far-eye
   far-eye-slash
@@ -20,6 +21,7 @@ register_asset "stylesheets/common/fingerprint.scss"
   microphone
   microphone-slash
   mobile
+  unlock
   user
   user-slash
 ].each { |i| register_svg_icon(i) }

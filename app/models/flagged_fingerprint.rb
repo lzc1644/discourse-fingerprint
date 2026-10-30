@@ -11,6 +11,7 @@ end
 #  value      :string           not null
 #  hidden     :boolean          default(FALSE), not null
 #  silenced   :boolean          default(FALSE), not null
+#  suspended  :boolean          default(FALSE), not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #

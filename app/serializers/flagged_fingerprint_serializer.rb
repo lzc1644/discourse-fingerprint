@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FlaggedFingerprintSerializer < ApplicationSerializer
-  attributes :name, :value, :hidden, :silenced, :data, :count, :is_common
+  attributes :name, :value, :hidden, :silenced, :suspended, :data, :count, :is_common
 
   def include_name?
     scope.present? && scope[:fingerprints].present? && scope[:fingerprints][value].present?

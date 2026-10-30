@@ -150,6 +150,21 @@ export default class FingerprintUserReport extends Component {
                         class="btn-flat no-text silence"
                       />
                     {{/if}}
+                    {{#if fingerprint.suspended}}
+                      <DButton
+                        @action={{fn @flag "suspend" fingerprint "yes"}}
+                        @icon="unlock"
+                        @title="js.fingerprint.unsuspend"
+                        class="btn-flat no-text"
+                      />
+                    {{else}}
+                      <DButton
+                        @action={{fn @flag "suspend" fingerprint}}
+                        @icon="ban"
+                        @title="js.fingerprint.suspend"
+                        class="btn-flat no-text suspend"
+                      />
+                    {{/if}}
                     {{#if fingerprint.data}}
                       <DButton
                         @action={{fn @showFingerprintData fingerprint.data}}
